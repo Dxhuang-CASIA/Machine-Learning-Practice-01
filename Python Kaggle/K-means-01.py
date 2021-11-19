@@ -8,9 +8,9 @@ digits_train = pd.read_csv(r'./data/optdigits/train.csv')
 digits_test = pd.read_csv(r'./data/optdigits/test.csv')
 # digits_train = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/optdigits/optdigits.tra', header=None)
 # digits_test = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/optdigits/optdigits.tes', header=None)
-
-digits_train.to_csv(r'./data/optdigits/train.csv')
-digits_test.to_csv(r'./data/optdigits/test.csv')
+#
+# digits_train.to_csv(r'./data/optdigits/train.csv')
+# digits_test.to_csv(r'./data/optdigits/test.csv')
 
 X_train = digits_train.iloc[:, :-1]
 y_train = digits_train.iloc[:, -1]
