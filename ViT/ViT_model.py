@@ -61,12 +61,12 @@ class PatchEmbed(nn.Module):
         input = self.norm(input)
         return input
 
-class MSA(nn.Module):
+class MSA(nn.Module): # Multi-Head Self Attention
     def __init__(self,
                  dim, # 输入token的dim 也就是C
                  num_heads = 8,
                  qkv_bias = False, # 映射的时候是否添加偏置
-                 qk_scale = None,
+                 qk_scale = None, # 根号dk
                  attn_drop_ratio = 0.,
                  proj_drop_ratio = 0.):
         super(MSA, self).__init__()
@@ -85,7 +85,7 @@ class MSA(nn.Module):
         q, k, v = qkv[0], qkv[1], qkv[2]
 
         attn = (q @ k.transpose(-2, -1)) * self.scale
-        attn = attn.softmax(dim = -1)
+        attn = attn.softmax(dim = -1) # 每一行
         attn = self.att_drop(attn)
 
         input = (attn @ v).transpose(1, 2).reshape(B, N, C)
@@ -115,7 +115,7 @@ class Block(nn.Module):
     def __init__(self,
                  dim,
                  num_heads,
-                 mlp_ratio = 4.,
+                 mlp_ratio = 4., # 第一个全连接层hidden是dim4倍
                  qkv_bias = False,
                  qk_scale = None,
                  drop_ratio = 0.,
@@ -154,7 +154,7 @@ class Vision_Transformer(nn.Module):
         num_patches = self.patch_embed.num_patchs
 
         self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
-        self.dist_token = nn.Parameter(torch.zeros(1, 1, embed_dim)) if distilled else None
+        self.dist_token = nn.Parameter(torch.zeros(1, 1, embed_dim)) if distilled else None # ViT不管
         self.pos_embed = nn.Parameter(torch.zeros((1, num_patches + self.num_tokens, embed_dim)))
         self.pos_drop = nn.Dropout(p = drop_ratio)
 
@@ -230,10 +230,6 @@ def vit_base_patch16_224_in21k(num_classes: int = 21843, has_logits: bool = True
                                num_classes = num_classes)
     return model
 
-X = torch.rand(size=(1, 3, 224, 224))
-model = vit_base_patch16_224_in21k()
-print(model(X).shape)
-
 # X = torch.rand(size=(1, 3, 224, 224))
-# model = PatchEmbed()
+# model = vit_base_patch16_224_in21k()
 # print(model(X).shape)
